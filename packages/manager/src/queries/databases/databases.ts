@@ -7,6 +7,8 @@ import {
   getEngineDatabase,
   resetDatabaseCredentials,
   restoreWithBackup,
+  resumeDatabase,
+  suspendDatabase,
   updateDatabase,
 } from '@linode/api-v4/lib/databases';
 import { createQueryKeys } from '@lukemorales/query-key-factory';
@@ -155,6 +157,36 @@ export const useDeleteDatabaseMutation = (engine: Engine, id: number) => {
       queryClient.removeQueries({
         queryKey: databaseQueries.database(engine, id).queryKey,
       });
+    },
+  });
+};
+
+export const useSuspendDatabaseMutation = (engine: Engine, id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation<{}, APIError[]>({
+    mutationFn: () => suspendDatabase(engine, id),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: databaseQueries.databases.queryKey,
+      });
+      // queryClient.removeQueries({
+      //   queryKey: databaseQueries.database(engine, id).queryKey,
+      // });
+    },
+  });
+};
+
+export const useResumeDatabaseMutation = (engine: Engine, id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation<{}, APIError[]>({
+    mutationFn: () => resumeDatabase(engine, id),
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: databaseQueries.databases.queryKey,
+      });
+      // queryClient.removeQueries({
+      //   queryKey: databaseQueries.database(engine, id).queryKey,
+      // });
     },
   });
 };

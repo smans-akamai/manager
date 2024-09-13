@@ -198,6 +198,7 @@ const entityTransfers = [
 
 const databases = [
   http.get('*/databases/instances', () => {
+    // const databases = databaseInstanceFactory.buildList(0);
     const databases = databaseInstanceFactory.buildList(9);
     return HttpResponse.json(makeResourcePage(databases));
   }),
@@ -310,6 +311,14 @@ const databases = [
       return HttpResponse.json({ ...databaseFactory.build({ id }), ...body });
     }
   ),
+
+  http.post('*/databases/:engine/instances/:databaseId/suspend', () => {
+    return HttpResponse.json({});
+  }),
+
+  http.post('*/databases/:engine/instances/:databaseId/resume', () => {
+    return HttpResponse.json({});
+  }),
 
   http.delete('*/databases/mysql/instances/:databaseId', () => {
     return HttpResponse.json({});

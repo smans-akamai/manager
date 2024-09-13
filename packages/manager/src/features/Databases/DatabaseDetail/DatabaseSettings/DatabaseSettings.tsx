@@ -11,6 +11,7 @@ import DatabaseSettingsDeleteClusterDialog from './DatabaseSettingsDeleteCluster
 import DatabaseSettingsMenuItem from './DatabaseSettingsMenuItem';
 import DatabaseSettingsResetPasswordDialog from './DatabaseSettingsResetPasswordDialog';
 import MaintenanceWindow from './MaintenanceWindow';
+import DatabaseSettingsSuspendClusterDialog from './DatabaseSettingsSuspendClusterDialog';
 
 interface Props {
   database: Database;
@@ -31,14 +32,25 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
   const resetRootPasswordCopy =
     'Resetting your root password will automatically generate a new password. You can view the updated password on your database cluster summary page. ';
 
+  const suspendClusterCopy =
+    'Suspend cluster lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+
+  const powerOnClusterCopy =
+    'Power on cluster lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+
   const deleteClusterCopy =
     'Deleting a database cluster is permanent and cannot be undone.';
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [
+    isSuspendClusterDialogOpen,
+    setIsSuspendClusterDialogOpen,
+  ] = React.useState(false);
+  const [
     isResetRootPasswordDialogOpen,
     setIsResetRootPasswordDialogOpen,
   ] = React.useState(false);
+  const [isSuspended, setIsSuspended] = React.useState(false);
 
   const onResetRootPassword = () => {
     setIsResetRootPasswordDialogOpen(true);
@@ -46,6 +58,10 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
 
   const onDeleteCluster = () => {
     setIsDeleteDialogOpen(true);
+  };
+
+  const onSuspendCluster = () => {
+    setIsSuspendClusterDialogOpen(true);
   };
 
   const onDeleteClusterClose = () => {
@@ -56,9 +72,29 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
     setIsResetRootPasswordDialogOpen(false);
   };
 
+  const onSuspendClusterClose = () => {
+    setIsSuspendClusterDialogOpen(false);
+  };
+
+  // To Be Removed: Mocks toggling the suspended state for now
+  // Figure out what drives the suspended state from the backend
+  const toggleSuspend = () => {
+    setIsSuspended((isSuspended) => !isSuspended);
+  };
+
   return (
     <>
       <Paper>
+        <DatabaseSettingsMenuItem
+          buttonText={isSuspended ? 'Power On Cluster' : 'Suspend Cluster'}
+          descriptiveText={
+            isSuspended ? powerOnClusterCopy : suspendClusterCopy
+          }
+          disabled={disabled}
+          onClick={onSuspendCluster}
+          sectionTitle={isSuspended ? 'Power On Cluster' : 'Suspend Cluster'}
+        />
+        <Divider spacingBottom={22} spacingTop={28} />
         <AccessControls
           database={database}
           description={accessControlCopy}
@@ -99,6 +135,15 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
         databaseID={database.id}
         onClose={onResetRootPasswordClose}
         open={isResetRootPasswordDialogOpen}
+      />
+      <DatabaseSettingsSuspendClusterDialog
+        databaseEngine={database.engine}
+        databaseID={database.id}
+        databaseLabel={database.label}
+        onClose={onSuspendClusterClose}
+        open={isSuspendClusterDialogOpen}
+        toggleSuspend={toggleSuspend}
+        action={isSuspended ? 'resume' : 'suspend'}
       />
     </>
   );
