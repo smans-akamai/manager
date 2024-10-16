@@ -12,6 +12,7 @@ import DatabaseSettingsResetPasswordDialog from './DatabaseSettingsResetPassword
 import MaintenanceWindow from './MaintenanceWindow';
 
 import type { Database } from '@linode/api-v4/lib/databases/types';
+import DatabaseSettingsSuspendClusterDialog from './DatabaseSettingsSuspendClusterDialog';
 
 interface Props {
   database: Database;
@@ -30,6 +31,9 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
   );
 
   const isLegacy = database.platform === 'rdbms-legacy';
+  // const isDefault = database.platform === 'rdbms-default';
+
+  const suspendClusterCopy = `Suspend the cluster if it's temporarily not used to prevent being billed for it.`;
 
   const resetRootPasswordCopy = isLegacy
     ? 'Resetting your root password will automatically generate a new password. You can view the updated password on your database cluster summary page. '
@@ -44,6 +48,10 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
     isResetRootPasswordDialogOpen,
     setIsResetRootPasswordDialogOpen,
   ] = React.useState(false);
+  const [
+    isSuspendClusterDialogOpen,
+    setIsSuspendClusterDialogOpen,
+  ] = React.useState(false);
 
   const onResetRootPassword = () => {
     setIsResetRootPasswordDialogOpen(true);
@@ -51,6 +59,10 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
 
   const onDeleteCluster = () => {
     setIsDeleteDialogOpen(true);
+  };
+
+  const onSuspendCluster = () => {
+    setIsSuspendClusterDialogOpen(true);
   };
 
   const onDeleteClusterClose = () => {
@@ -61,9 +73,24 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
     setIsResetRootPasswordDialogOpen(false);
   };
 
+  const onSuspendClusterClose = () => {
+    setIsSuspendClusterDialogOpen(false);
+  };
+
+  // To Be Removed: Mocks toggling the suspended state for now
+  // Figure out what drives the suspended state from the backend
+
   return (
     <>
       <Paper>
+        <DatabaseSettingsMenuItem
+          buttonText={'Suspend Cluster'}
+          descriptiveText={suspendClusterCopy}
+          disabled={disabled}
+          onClick={onSuspendCluster}
+          sectionTitle={'Suspend Cluster'}
+        />
+        <Divider spacingBottom={22} spacingTop={28} />
         <AccessControls
           database={database}
           description={accessControlCopy}
@@ -104,6 +131,13 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
         databaseID={database.id}
         onClose={onResetRootPasswordClose}
         open={isResetRootPasswordDialogOpen}
+      />
+      <DatabaseSettingsSuspendClusterDialog
+        databaseEngine={database.engine}
+        databaseID={database.id}
+        databaseLabel={database.label}
+        onClose={onSuspendClusterClose}
+        open={isSuspendClusterDialogOpen}
       />
     </>
   );

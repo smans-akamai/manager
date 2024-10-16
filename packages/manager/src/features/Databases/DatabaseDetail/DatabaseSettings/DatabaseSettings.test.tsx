@@ -19,9 +19,11 @@ describe('DatabaseSettings Component', () => {
     const paper = container.querySelector('.MuiPaper-root');
     expect(paper).not.toBeNull();
     const headings = getAllByRole('heading');
-    expect(headings[0].textContent).toBe('Access Controls');
-    expect(headings[1].textContent).toBe('Reset Root Password');
-    expect(headings[2].textContent).toBe('Delete Cluster');
+
+    expect(headings[0].textContent).toBe('Suspend Cluster');
+    expect(headings[1].textContent).toBe('Access Controls');
+    expect(headings[2].textContent).toBe('Reset Root Password');
+    expect(headings[3].textContent).toBe('Delete Cluster');
   });
 
   it.each([
