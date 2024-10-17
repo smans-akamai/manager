@@ -77,6 +77,17 @@ const DatabaseLandingTable = ({
     setIsResetPasswordsDialogOpen(true);
   };
 
+  const handleSuspend = (database: DatabaseInstance) => {
+    setSelectedDatabase(database);
+    // setIsResetPasswordsDialogOpen(true);
+  };
+
+  const handleResume = (database: DatabaseInstance) => {
+    // setSelectedDatabase(database);
+    // setIsResetPasswordsDialogOpen(true);
+    // No dialog, make call to resume
+  };
+
   return (
     <>
       <Table sx={{ marginTop: '10px' }}>
@@ -157,6 +168,8 @@ const DatabaseLandingTable = ({
                 handleManageAccessControls: () =>
                   handleManageAccessControls(database),
                 handleResetPassword: () => handleResetPassword(database),
+                handleSuspend: () => handleSuspend(database),
+                handleResume: () => handleResume(database),
               }}
               database={database}
               events={events}

@@ -13,6 +13,7 @@ import MaintenanceWindow from './MaintenanceWindow';
 
 import type { Database } from '@linode/api-v4/lib/databases/types';
 import DatabaseSettingsSuspendClusterDialog from './DatabaseSettingsSuspendClusterDialog';
+import { useIsDatabasesEnabled } from '../../utilities';
 
 interface Props {
   database: Database;
@@ -22,6 +23,7 @@ interface Props {
 export const DatabaseSettings: React.FC<Props> = (props) => {
   const { database, disabled } = props;
   const { data: profile } = useProfile();
+  const { isDatabasesV2GA } = useIsDatabasesEnabled();
 
   const accessControlCopy = (
     <Typography>
@@ -31,7 +33,7 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
   );
 
   const isLegacy = database.platform === 'rdbms-legacy';
-  // const isDefault = database.platform === 'rdbms-default';
+  const isDefault = database.platform === 'rdbms-default';
 
   const suspendClusterCopy = `Suspend the cluster if it's temporarily not used to prevent being billed for it.`;
 
@@ -77,19 +79,18 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
     setIsSuspendClusterDialogOpen(false);
   };
 
-  // To Be Removed: Mocks toggling the suspended state for now
-  // Figure out what drives the suspended state from the backend
-
   return (
     <>
       <Paper>
-        <DatabaseSettingsMenuItem
-          buttonText={'Suspend Cluster'}
-          descriptiveText={suspendClusterCopy}
-          disabled={disabled}
-          onClick={onSuspendCluster}
-          sectionTitle={'Suspend Cluster'}
-        />
+        {isDatabasesV2GA && isDefault ? (
+          <DatabaseSettingsMenuItem
+            buttonText={'Suspend Cluster'}
+            descriptiveText={suspendClusterCopy}
+            disabled={disabled}
+            onClick={onSuspendCluster}
+            sectionTitle={'Suspend Cluster'}
+          />
+        ) : null}
         <Divider spacingBottom={22} spacingTop={28} />
         <AccessControls
           database={database}
@@ -132,13 +133,15 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
         onClose={onResetRootPasswordClose}
         open={isResetRootPasswordDialogOpen}
       />
-      <DatabaseSettingsSuspendClusterDialog
-        databaseEngine={database.engine}
-        databaseID={database.id}
-        databaseLabel={database.label}
-        onClose={onSuspendClusterClose}
-        open={isSuspendClusterDialogOpen}
-      />
+      {isDatabasesV2GA && isDefault ? (
+        <DatabaseSettingsSuspendClusterDialog
+          databaseEngine={database.engine}
+          databaseID={database.id}
+          databaseLabel={database.label}
+          onClose={onSuspendClusterClose}
+          open={isSuspendClusterDialogOpen}
+        />
+      ) : null}
     </>
   );
 };

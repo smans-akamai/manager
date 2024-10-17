@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 import { ActionMenu } from 'src/components/ActionMenu/ActionMenu';
 
-import type { Engine } from '@linode/api-v4';
+import type { DatabaseStatus, Engine } from '@linode/api-v4';
 import type { Action } from 'src/components/ActionMenu/ActionMenu';
 
 interface Props {
@@ -11,40 +11,53 @@ interface Props {
   databaseId: number;
   databaseLabel: string;
   handlers: ActionHandlers;
+  databaseStatus: DatabaseStatus;
 }
 
 export interface ActionHandlers {
   handleDelete: () => void;
   handleManageAccessControls: () => void;
   handleResetPassword: () => void;
+  handleSuspend: () => void;
+  handleResume: () => void;
 }
 
 export const DatabaseActionMenu = (props: Props) => {
-  const { databaseEngine, databaseId, databaseLabel, handlers } = props;
+  const {
+    databaseEngine,
+    databaseId,
+    databaseLabel,
+    handlers,
+    databaseStatus,
+  } = props;
 
-  const databaseStatus = 'running';
-  const isDatabaseNotRunning = databaseStatus !== 'running';
+  // const databaseStatus = 'running';
+  const isDatabaseNotActive = databaseStatus !== 'active';
+  const isDatabaseSuspended =
+    databaseStatus === 'suspended' || databaseStatus === 'suspending';
 
   const history = useHistory();
 
   const actions: Action[] = [
-    // TODO: add suspend action menu item once it's ready
-    // {
-    //   onClick: () => {},
-    //   title: databaseStatus === 'running' ? 'Suspend' : 'Power On',
-    // },
     {
-      disabled: isDatabaseNotRunning,
+      disabled: isDatabaseNotActive,
+      onClick: () => {
+        // console.log('suspending');
+      },
+      title: 'Suspend',
+    },
+    {
+      disabled: isDatabaseNotActive,
       onClick: handlers.handleManageAccessControls,
       title: 'Manage Access Controls',
     },
     {
-      disabled: isDatabaseNotRunning,
+      disabled: isDatabaseNotActive,
       onClick: handlers.handleResetPassword,
       title: 'Reset Root Password',
     },
     {
-      disabled: isDatabaseNotRunning,
+      disabled: isDatabaseNotActive,
       onClick: () => {
         history.push({
           pathname: `/databases/${databaseEngine}/${databaseId}/resize`,
@@ -53,7 +66,14 @@ export const DatabaseActionMenu = (props: Props) => {
       title: 'Resize',
     },
     {
-      disabled: isDatabaseNotRunning,
+      disabled: !isDatabaseSuspended,
+      onClick: () => {
+        // console.log('resuming');
+      },
+      title: 'Resume',
+    },
+    {
+      disabled: isDatabaseNotActive,
       onClick: handlers.handleDelete,
       title: 'Delete',
     },

@@ -54,6 +54,7 @@ export const DatabaseRow = ({
     id,
     label,
     region,
+    status,
     type,
     version,
   } = database;
@@ -110,6 +111,7 @@ export const DatabaseRow = ({
       {isDatabasesV2GA && isNewDatabase && (
         <TableCell actionCell>
           <DatabaseActionMenu
+            databaseStatus={status}
             databaseEngine={engine}
             databaseId={id}
             databaseLabel={label}
