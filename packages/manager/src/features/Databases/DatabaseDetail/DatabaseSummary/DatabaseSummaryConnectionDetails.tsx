@@ -7,10 +7,13 @@ import * as React from 'react';
 
 import DownloadIcon from 'src/assets/icons/lke-download.svg';
 import { CopyTooltip } from 'src/components/CopyTooltip/CopyTooltip';
+import { Link } from 'src/components/Link';
 import { DB_ROOT_USERNAME } from 'src/constants';
+import { useFlags } from 'src/hooks/useFlags';
 import { useDatabaseCredentialsQuery } from 'src/queries/databases/databases';
 import { getErrorStringOrDefault } from 'src/utilities/errorUtils';
 
+import { isDefaultDatabase } from '../../utilities';
 import {
   StyledGridContainer,
   StyledLabelTypography,
@@ -19,6 +22,7 @@ import {
 import { useStyles } from './DatabaseSummaryConnectionDetails.style';
 
 import type { Database, SSLFields } from '@linode/api-v4/lib/databases/types';
+import type { Theme } from '@mui/material/styles';
 
 interface Props {
   database: Database;
@@ -36,7 +40,10 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
   const { database } = props;
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const flags = useFlags();
   const isLegacy = database.platform !== 'rdbms-default';
+  const displayConnectionType =
+    flags.databaseVpc && isDefaultDatabase(database);
 
   const [showCredentials, setShowPassword] = React.useState<boolean>(false);
   const [isCACertDownloading, setIsCACertDownloading] =
@@ -173,6 +180,12 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
         </span>
       )}
     </>
+  );
+
+  const networkingDetailsLink = (
+    <Link to={`/databases/${database?.engine}/${database?.id}/networking`}>
+      View Details
+    </Link>
   );
 
   return (
@@ -314,6 +327,28 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
         <StyledValueGrid size={{ md: 8, xs: 9 }}>
           {database.ssl_connection ? 'ENABLED' : 'DISABLED'}
         </StyledValueGrid>
+        {displayConnectionType ? (
+          <>
+            <Grid
+              size={{
+                md: 4,
+                xs: 3,
+              }}
+            >
+              <StyledLabelTypography>Connection Type</StyledLabelTypography>
+            </Grid>
+            <StyledValueGrid size={{ md: 8, xs: 9 }}>
+              <Typography
+                sx={(theme: Theme) => ({
+                  marginRight: theme.spacingFunction(20),
+                })}
+              >
+                {database?.private_network?.vpc_id ? 'Private' : 'Public'}
+              </Typography>
+              {networkingDetailsLink}
+            </StyledValueGrid>
+          </>
+        ) : null}
       </StyledGridContainer>
       <div className={classes.actionBtnsCtn}>
         {database.ssl_connection ? caCertificateJSX : null}
