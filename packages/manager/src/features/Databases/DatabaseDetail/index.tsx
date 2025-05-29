@@ -1,4 +1,10 @@
-import { BetaChip, CircleProgress, ErrorState, Notice } from '@linode/ui';
+import {
+  BetaChip,
+  CircleProgress,
+  ErrorState,
+  NewFeatureChip,
+  Notice,
+} from '@linode/ui';
 import { useEditableLabelState } from '@linode/utilities';
 import { useParams } from '@tanstack/react-router';
 import * as React from 'react';
@@ -46,6 +52,12 @@ const DatabaseMonitor = React.lazy(() =>
   }))
 );
 
+const DatabaseNetworking = React.lazy(() =>
+  import('./DatabaseNetworking/DatabaseNetworking').then((module) => ({
+    default: module.DatabaseNetworking,
+  }))
+);
+
 export const DatabaseDetail = () => {
   const flags = useFlags();
 
@@ -73,6 +85,7 @@ export const DatabaseDetail = () => {
 
   const isDefault = database?.platform === 'rdbms-default';
   const isMonitorEnabled = isDefault && flags.dbaasV2MonitorMetrics?.enabled;
+  const isVPCEnabled = isDefault && flags.databaseVpc;
   const isAdvancedConfigEnabled = isDefault && flags.databaseAdvancedConfig;
 
   const { tabs, tabIndex, handleTabChange, getTabIndex } = useTabs([
@@ -85,6 +98,12 @@ export const DatabaseDetail = () => {
       title: 'Metrics',
       hide: !isMonitorEnabled,
       chip: flags.dbaasV2MonitorMetrics?.beta ? <BetaChip /> : null,
+    },
+    {
+      to: `/databases/$engine/$databaseId/networking`,
+      title: 'Networking',
+      hide: !isVPCEnabled,
+      chip: <NewFeatureChip />,
     },
     {
       to: `/databases/$engine/$databaseId/backups`,
@@ -198,6 +217,13 @@ export const DatabaseDetail = () => {
               index={getTabIndex('/databases/$engine/$databaseId/metrics')}
             >
               <DatabaseMonitor database={database} />
+            </SafeTabPanel>
+          ) : null}
+          {isVPCEnabled ? (
+            <SafeTabPanel
+              index={getTabIndex('/databases/$engine/$databaseId/networking')}
+            >
+              <DatabaseNetworking database={database} />
             </SafeTabPanel>
           ) : null}
           <SafeTabPanel
