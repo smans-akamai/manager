@@ -1,8 +1,9 @@
-import { Paper, Typography } from '@linode/ui';
+import { Divider, Paper, Stack, Typography } from '@linode/ui';
 import React from 'react';
 
 import { ACCESS_CONTROLS_IN_SETTINGS_TEXT } from '../../constants';
 import AccessControls from '../AccessControls';
+import { DatabaseManageNetworking } from './DatabaseManageNetworking';
 
 import type { Database } from '@linode/api-v4';
 
@@ -18,11 +19,14 @@ export const DatabaseNetworking = ({ database, disabled }: Props) => {
 
   return (
     <Paper sx={{ marginTop: 2 }}>
-      <AccessControls
-        database={database}
-        description={accessControlCopy}
-        disabled={disabled}
-      />
+      <Stack divider={<Divider spacingBottom={0} spacingTop={0} />} spacing={3}>
+        <AccessControls
+          database={database}
+          description={accessControlCopy}
+          disabled={disabled}
+        />
+        <DatabaseManageNetworking database={database} />
+      </Stack>
     </Paper>
   );
 };

@@ -309,7 +309,7 @@ const databases = [
       db.ssl_connection = true;
     }
     const database = databaseFactory.build(db);
-    if (!isDefault) {
+    if (database.platform !== 'rdbms-default') {
       delete database.private_network;
     }
     return HttpResponse.json(database);
