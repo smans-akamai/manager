@@ -15,6 +15,7 @@ import { DatabaseSettingsReviewUpdatesDialog } from 'src/features/Databases/Data
 import { DatabaseSettingsUpgradeVersionDialog } from 'src/features/Databases/DatabaseDetail/DatabaseSettings/DatabaseSettingsUpgradeVersionDialog';
 import {
   isDefaultDatabase,
+  isLegacyDatabase,
   useIsDatabasesEnabled,
 } from 'src/features/Databases/utilities';
 import { useFlags } from 'src/hooks/useFlags';
@@ -128,7 +129,7 @@ export const DatabaseSettings: React.FC<Props> = (props) => {
               sectionTitle={'Suspend Cluster'}
             />
           )}
-          {!isVPCEnabled ? (
+          {!isVPCEnabled || isLegacyDatabase(database) ? (
             <AccessControls
               database={database}
               description={accessControlCopy}
