@@ -2,13 +2,13 @@ import { useVPCQuery } from '@linode/queries';
 import { Button, Typography } from '@linode/ui';
 import { Grid } from '@mui/material';
 import React from 'react';
+import { makeStyles } from 'tss-react/mui';
 
 import {
   StyledGridContainer,
   StyledLabelTypography,
   StyledValueGrid,
 } from '../DatabaseSummary/DatabaseSummaryClusterConfiguration.style';
-import { useStyles } from '../DatabaseSummary/DatabaseSummaryConnectionDetails.style';
 
 import type { Database } from '@linode/api-v4';
 import type { Theme } from '@mui/material';
@@ -19,6 +19,49 @@ interface Props {
 }
 
 export const DatabaseManageNetworking = ({ database }: Props) => {
+  const useStyles = makeStyles()((theme: Theme) => ({
+    manageNetworkingBtn: {
+      minWidth: 225,
+      [theme.breakpoints.down('md')]: {
+        alignSelf: 'flex-start',
+        marginBottom: '1rem',
+      },
+    },
+    sectionText: {
+      marginBottom: '1rem',
+      marginRight: 0,
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+      width: '65%',
+    },
+    sectionTitle: {
+      marginBottom: '0.25rem',
+    },
+    sectionTitleAndText: {
+      width: '100%',
+    },
+    table: {
+      border: `solid 1px ${theme.borderColors.borderTable}`,
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
+      width: '50%',
+    },
+    topSection: {
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'space-between',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+      },
+    },
+    provisioningText: {
+      font: theme.font.normal,
+      fontStyle: 'italic',
+    },
+  }));
+
   const { classes } = useStyles();
   const vpcId = Number(database.private_network?.vpc_id);
   const hasVPCConfigured = Boolean(vpcId);
@@ -47,33 +90,28 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
 
   return (
     <>
-      <Grid container justifyContent={'space-between'}>
-        <Grid size={9}>
-          <Typography variant="h2">Manage Networking</Typography>
-          <Typography sx={{ mb: 1, mt: 1, maxWidth: '500px' }}>
+      <div className={classes.topSection}>
+        <div className={classes.sectionTitleAndText}>
+          <div className={classes.sectionTitle}>
+            <Typography variant="h3">Manage Networking</Typography>
+          </div>
+          <Typography sx={{ maxWidth: '500px' }}>
             Update access settings or the VPC assignment.
             <br />
             Note that a change of VPC assignment settings can disrupt service
             availability. Avoid writing data to the database while a change is
             in progress.
           </Typography>
-        </Grid>
+        </div>
         <Button
           buttonType="outlined"
+          className={classes.manageNetworkingBtn}
           disabled={true} // Disabled until manage networking is fully implemented
-          sx={(theme: Theme) => ({
-            height: '1px',
-            minWidth: 225,
-            [theme.breakpoints.down('md')]: {
-              alignSelf: 'flex-start',
-              marginBottom: '1rem',
-            },
-          })}
-          title="Manage Networking"
+          onClick={() => null}
         >
           Manage Networking
         </Button>
-      </Grid>
+      </div>
 
       <StyledGridContainer container size={gridContainerSize} spacing={0}>
         <Grid size={gridLabelSize}>
@@ -94,7 +132,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
               <StyledLabelTypography>Subnet</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              {`${currentSubnet?.label} (${currentSubnet?.ipv4})`}
+              <Typography>{`${currentSubnet?.label} (${currentSubnet?.ipv4})`}</Typography>
             </StyledValueGrid>
           </>
         ) : null}
