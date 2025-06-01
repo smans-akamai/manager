@@ -4,6 +4,7 @@ import { Grid } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
 
+import { getReadOnlyHost } from '../../utilities';
 import {
   StyledGridContainer,
   StyledLabelTypography,
@@ -79,12 +80,11 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
     [vpc]
   );
 
-  const readOnlyHostValue =
-    database?.hosts?.standby ?? database?.hosts?.secondary ?? '';
-
   const readOnlyHost = () => {
     const defaultValue = 'N/A';
-    const value = readOnlyHostValue ? readOnlyHostValue : defaultValue;
+    const value = getReadOnlyHost(database)
+      ? getReadOnlyHost(database)
+      : defaultValue;
     return <span>{value}</span>;
   };
 

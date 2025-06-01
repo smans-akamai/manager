@@ -19,7 +19,7 @@ import { useFlags } from 'src/hooks/useFlags';
 import { useDatabaseCredentialsQuery } from 'src/queries/databases/databases';
 import { getErrorStringOrDefault } from 'src/utilities/errorUtils';
 
-import { isDefaultDatabase } from '../../utilities';
+import { getReadOnlyHost, isDefaultDatabase } from '../../utilities';
 import {
   StyledGridContainer,
   StyledLabelTypography,
@@ -121,12 +121,12 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
 
   const disableShowBtn = ['failed', 'provisioning'].includes(database.status);
   const disableDownloadCACertificateBtn = database.status === 'provisioning';
-  const readOnlyHostValue =
-    database?.hosts?.standby ?? database?.hosts?.secondary ?? '';
 
   const readOnlyHost = () => {
     const defaultValue = isLegacy ? '-' : 'N/A';
-    const value = readOnlyHostValue ? readOnlyHostValue : defaultValue;
+    const value = getReadOnlyHost(database)
+      ? getReadOnlyHost(database)
+      : defaultValue;
     const hasHost = value !== '-' && value !== 'N/A';
     return (
       <>
