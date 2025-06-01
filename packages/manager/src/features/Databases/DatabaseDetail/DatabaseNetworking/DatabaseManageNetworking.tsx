@@ -18,6 +18,8 @@ interface Props {
 
 export const DatabaseManageNetworking = ({ database }: Props) => {
   const hasVPCConfigured = database?.private_network?.vpc_id;
+  const gridValueSize = { md: 8, xs: 9 };
+  const gridLabelSize = { md: 4, xs: 3 };
 
   return (
     <>
@@ -34,7 +36,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
         </Grid>
         <Button
           buttonType="outlined"
-          disabled={true} // Disabled until networking management is implemented
+          disabled={true} // Disabled until manage networking is fully implemented
           sx={(theme: Theme) => ({
             height: '1px',
             minWidth: 225,
@@ -49,78 +51,48 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
         </Button>
       </Grid>
 
-      <StyledGridContainer container size={{ lg: 6, md: 8 }} spacing={0}>
-        <Grid
-          size={{
-            md: 3,
-            xs: 3,
-          }}
-        >
+      <StyledGridContainer container size={{ lg: 7, md: 10 }} spacing={0}>
+        <Grid size={gridLabelSize}>
           <StyledLabelTypography>Connection Type</StyledLabelTypography>
         </Grid>
-        <StyledValueGrid size={{ md: 8, xs: 8 }}>
+        <StyledValueGrid size={gridValueSize}>
           <Typography>VPC</Typography>
         </StyledValueGrid>
         {hasVPCConfigured ? (
           <>
-            <Grid
-              size={{
-                md: 3,
-                xs: 3,
-              }}
-            >
+            <Grid size={gridLabelSize}>
               <StyledLabelTypography>VPC</StyledLabelTypography>
             </Grid>
-            <StyledValueGrid size={{ md: 8, xs: 8 }}>
+            <StyledValueGrid size={gridValueSize}>
               <Typography>VPC-TEST-1</Typography>
             </StyledValueGrid>
-            <Grid
-              size={{
-                md: 3,
-                xs: 3,
-              }}
-            >
+            <Grid size={gridLabelSize}>
               <StyledLabelTypography>Subnet</StyledLabelTypography>
             </Grid>
-            <StyledValueGrid size={{ md: 8, xs: 8 }}>
+            <StyledValueGrid size={gridValueSize}>
               <Typography>Subnet-02 (0.0.0.0/24)</Typography>
             </StyledValueGrid>
           </>
         ) : null}
 
-        <Grid
-          size={{
-            md: 3,
-            xs: 3,
-          }}
-        >
+        <Grid size={gridLabelSize}>
           <StyledLabelTypography>Host</StyledLabelTypography>
         </Grid>
-        <StyledValueGrid size={{ md: 8, xs: 8 }}>
+        <StyledValueGrid size={gridValueSize}>
           <Typography>some-random-host</Typography>
         </StyledValueGrid>
-        <Grid
-          size={{
-            md: 3,
-            xs: 3,
-          }}
-        >
+        <Grid size={gridLabelSize}>
           <StyledLabelTypography>Read-only Host</StyledLabelTypography>
         </Grid>
-        <StyledValueGrid size={{ md: 8, xs: 8 }}>
+        <StyledValueGrid size={gridValueSize}>
           <Typography>some-random-readonlyhost</Typography>
         </StyledValueGrid>
         {hasVPCConfigured ? (
           <>
-            <Grid
-              size={{
-                md: 3,
-                xs: 3,
-              }}
-            >
+            <Grid size={gridLabelSize}>
               <StyledLabelTypography>Public Access</StyledLabelTypography>
             </Grid>
-            <StyledValueGrid size={{ md: 8, xs: 8 }}>
+            <StyledValueGrid size={gridValueSize}>
               <Typography>No</Typography>
             </StyledValueGrid>
           </>
