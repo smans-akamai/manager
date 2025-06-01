@@ -1,5 +1,11 @@
 import { getSSLFields } from '@linode/api-v4/lib/databases/databases';
-import { Button, CircleProgress, TooltipIcon, Typography } from '@linode/ui';
+import {
+  Box,
+  Button,
+  CircleProgress,
+  TooltipIcon,
+  Typography,
+} from '@linode/ui';
 import { downloadFile } from '@linode/utilities';
 import Grid from '@mui/material/Grid';
 import { useSnackbar } from 'notistack';
@@ -182,12 +188,6 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
     </>
   );
 
-  const networkingDetailsLink = (
-    <Link to={`/databases/${database?.engine}/${database?.id}/networking`}>
-      View Details
-    </Link>
-  );
-
   return (
     <>
       <Typography className={classes.header} variant="h3">
@@ -338,14 +338,18 @@ export const DatabaseSummaryConnectionDetails = (props: Props) => {
               <StyledLabelTypography>Connection Type</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={{ md: 8, xs: 9 }}>
-              <Typography
+              <Box
                 sx={(theme: Theme) => ({
                   marginRight: theme.spacingFunction(20),
                 })}
               >
                 {database?.private_network?.vpc_id ? 'Private' : 'Public'}
-              </Typography>
-              {networkingDetailsLink}
+              </Box>
+              <Link
+                to={`/databases/${database?.engine}/${database?.id}/networking`}
+              >
+                View Details
+              </Link>
             </StyledValueGrid>
           </>
         ) : null}

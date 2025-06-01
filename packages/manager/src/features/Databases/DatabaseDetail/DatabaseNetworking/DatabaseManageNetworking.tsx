@@ -85,7 +85,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
   const readOnlyHost = () => {
     const defaultValue = 'N/A';
     const value = readOnlyHostValue ? readOnlyHostValue : defaultValue;
-    return <Typography>{value}</Typography>;
+    return <span>{value}</span>;
   };
 
   return (
@@ -118,21 +118,19 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
           <StyledLabelTypography>Connection Type</StyledLabelTypography>
         </Grid>
         <StyledValueGrid size={gridValueSize}>
-          <Typography>{hasVPCConfigured ? 'VPC' : 'Public'}</Typography>
+          {hasVPCConfigured ? 'VPC' : 'Public'}
         </StyledValueGrid>
         {hasVPCConfigured ? (
           <>
             <Grid size={gridLabelSize}>
               <StyledLabelTypography>VPC</StyledLabelTypography>
             </Grid>
-            <StyledValueGrid size={gridValueSize}>
-              <Typography>{vpc?.label}</Typography>
-            </StyledValueGrid>
+            <StyledValueGrid size={gridValueSize}>{vpc?.label}</StyledValueGrid>
             <Grid size={gridLabelSize}>
               <StyledLabelTypography>Subnet</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              <Typography>{`${currentSubnet?.label} (${currentSubnet?.ipv4})`}</Typography>
+              {`${currentSubnet?.label} (${currentSubnet?.ipv4})`}
             </StyledValueGrid>
           </>
         ) : null}
@@ -141,15 +139,13 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
           <StyledLabelTypography>Host</StyledLabelTypography>
         </Grid>
         <StyledValueGrid size={gridValueSize}>
-          <Typography>
-            {database.hosts?.primary ? (
-              database.hosts?.primary
-            ) : (
-              <span className={classes.provisioningText}>
-                Your hostname will appear here once it is available.
-              </span>
-            )}
-          </Typography>
+          {database.hosts?.primary ? (
+            database.hosts?.primary
+          ) : (
+            <span className={classes.provisioningText}>
+              Your hostname will appear here once it is available.
+            </span>
+          )}
         </StyledValueGrid>
         <Grid size={gridLabelSize}>
           <StyledLabelTypography>Read-only Host</StyledLabelTypography>
@@ -161,9 +157,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
               <StyledLabelTypography>Public Access</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              <Typography>
-                {database?.private_network?.public_access ? 'Yes' : 'No'}
-              </Typography>
+              {database?.private_network?.public_access ? 'Yes' : 'No'}
             </StyledValueGrid>
           </>
         ) : null}
