@@ -231,7 +231,7 @@ export const databaseFactory = Factory.Sync.makeFactory<Database>({
   platform: Factory.each((i) => (adb10(i) ? 'rdbms-legacy' : 'rdbms-default')),
   private_network: {
     public_access: false,
-    subnet_id: 1234,
+    subnet_id: 1,
     vpc_id: 123,
   },
   port: 3306,

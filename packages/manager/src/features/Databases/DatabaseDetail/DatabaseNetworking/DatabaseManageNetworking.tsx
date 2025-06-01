@@ -1,3 +1,4 @@
+import { useVPCQuery } from '@linode/queries';
 import { Button, Typography } from '@linode/ui';
 import { Grid } from '@mui/material';
 import React from 'react';
@@ -7,6 +8,7 @@ import {
   StyledLabelTypography,
   StyledValueGrid,
 } from '../DatabaseSummary/DatabaseSummaryClusterConfiguration.style';
+import { useStyles } from '../DatabaseSummary/DatabaseSummaryConnectionDetails.style';
 
 import type { Database } from '@linode/api-v4';
 import type { Theme } from '@mui/material';
@@ -17,10 +19,31 @@ interface Props {
 }
 
 export const DatabaseManageNetworking = ({ database }: Props) => {
-  const hasVPCConfigured = database?.private_network?.vpc_id;
+  const { classes } = useStyles();
+  const vpcId = Number(database.private_network?.vpc_id);
+  const hasVPCConfigured = Boolean(vpcId);
   const gridContainerSize = { lg: 7, md: 10 };
   const gridValueSize = { md: 8, xs: 9 };
   const gridLabelSize = { md: 4, xs: 3 };
+
+  const { data: vpc } = useVPCQuery(vpcId, hasVPCConfigured);
+
+  const currentSubnet = React.useMemo(
+    () =>
+      vpc?.subnets.find(
+        (subnet) => subnet.id === database?.private_network?.subnet_id
+      ),
+    [vpc]
+  );
+
+  const readOnlyHostValue =
+    database?.hosts?.standby ?? database?.hosts?.secondary ?? '';
+
+  const readOnlyHost = () => {
+    const defaultValue = 'N/A';
+    const value = readOnlyHostValue ? readOnlyHostValue : defaultValue;
+    return <Typography>{value}</Typography>;
+  };
 
   return (
     <>
@@ -57,7 +80,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
           <StyledLabelTypography>Connection Type</StyledLabelTypography>
         </Grid>
         <StyledValueGrid size={gridValueSize}>
-          <Typography>VPC</Typography>
+          <Typography>{hasVPCConfigured ? 'VPC' : 'Public'}</Typography>
         </StyledValueGrid>
         {hasVPCConfigured ? (
           <>
@@ -65,13 +88,13 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
               <StyledLabelTypography>VPC</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              <Typography>VPC-TEST-1</Typography>
+              <Typography>{vpc?.label}</Typography>
             </StyledValueGrid>
             <Grid size={gridLabelSize}>
               <StyledLabelTypography>Subnet</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              <Typography>Subnet-02 (0.0.0.0/24)</Typography>
+              {`${currentSubnet?.label} (${currentSubnet?.ipv4})`}
             </StyledValueGrid>
           </>
         ) : null}
@@ -80,21 +103,29 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
           <StyledLabelTypography>Host</StyledLabelTypography>
         </Grid>
         <StyledValueGrid size={gridValueSize}>
-          <Typography>some-random-host</Typography>
+          <Typography>
+            {database.hosts?.primary ? (
+              database.hosts?.primary
+            ) : (
+              <span className={classes.provisioningText}>
+                Your hostname will appear here once it is available.
+              </span>
+            )}
+          </Typography>
         </StyledValueGrid>
         <Grid size={gridLabelSize}>
           <StyledLabelTypography>Read-only Host</StyledLabelTypography>
         </Grid>
-        <StyledValueGrid size={gridValueSize}>
-          <Typography>some-random-readonlyhost</Typography>
-        </StyledValueGrid>
+        <StyledValueGrid size={gridValueSize}>{readOnlyHost()}</StyledValueGrid>
         {hasVPCConfigured ? (
           <>
             <Grid size={gridLabelSize}>
               <StyledLabelTypography>Public Access</StyledLabelTypography>
             </Grid>
             <StyledValueGrid size={gridValueSize}>
-              <Typography>No</Typography>
+              <Typography>
+                {database?.private_network?.public_access ? 'Yes' : 'No'}
+              </Typography>
             </StyledValueGrid>
           </>
         ) : null}
