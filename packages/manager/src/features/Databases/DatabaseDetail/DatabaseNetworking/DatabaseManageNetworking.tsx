@@ -18,6 +18,7 @@ interface Props {
 
 export const DatabaseManageNetworking = ({ database }: Props) => {
   const hasVPCConfigured = database?.private_network?.vpc_id;
+  const gridContainerSize = { lg: 7, md: 10 };
   const gridValueSize = { md: 8, xs: 9 };
   const gridLabelSize = { md: 4, xs: 3 };
 
@@ -51,7 +52,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
         </Button>
       </Grid>
 
-      <StyledGridContainer container size={{ lg: 7, md: 10 }} spacing={0}>
+      <StyledGridContainer container size={gridContainerSize} spacing={0}>
         <Grid size={gridLabelSize}>
           <StyledLabelTypography>Connection Type</StyledLabelTypography>
         </Grid>
