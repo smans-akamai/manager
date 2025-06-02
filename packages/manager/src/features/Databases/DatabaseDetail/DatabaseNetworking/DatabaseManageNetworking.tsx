@@ -1,5 +1,5 @@
 import { useVPCQuery } from '@linode/queries';
-import { Button, Typography } from '@linode/ui';
+import { Button, CircleProgress, ErrorState, Typography } from '@linode/ui';
 import { Grid } from '@mui/material';
 import React from 'react';
 import { makeStyles } from 'tss-react/mui';
@@ -42,13 +42,6 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
     sectionTitleAndText: {
       width: '100%',
     },
-    table: {
-      border: `solid 1px ${theme.borderColors.borderTable}`,
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-      },
-      width: '50%',
-    },
     topSection: {
       alignItems: 'center',
       display: 'flex',
@@ -70,7 +63,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
   const gridValueSize = { md: 8, xs: 9 };
   const gridLabelSize = { md: 4, xs: 3 };
 
-  const { data: vpc } = useVPCQuery(vpcId, hasVPCConfigured);
+  const { data: vpc, isLoading, error } = useVPCQuery(vpcId, hasVPCConfigured);
 
   const currentSubnet = React.useMemo(
     () =>
@@ -87,6 +80,16 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
       : defaultValue;
     return <span>{value}</span>;
   };
+
+  if (isLoading) {
+    return <CircleProgress />;
+  }
+
+  if ((hasVPCConfigured && !vpc) || error) {
+    return (
+      <ErrorState errorText="There was a problem retrieving your VPC. Please try again later." />
+    );
+  }
 
   return (
     <>
