@@ -120,6 +120,44 @@ describe('DatabaseSummaryConnectionDetails', () => {
     });
   });
 
+  it('should display Connection Type as Private for default database with VPC when databaseVpc flag is enabled', async () => {
+    queryMocks.useDatabaseCredentialsQuery.mockReturnValue({});
+
+    const database = databaseFactory.build({
+      platform: 'rdbms-default',
+    }) as Database;
+
+    const { queryAllByText } = renderWithTheme(
+      <DatabaseSummaryConnectionDetails database={database} />,
+      { flags: { databaseVpc: true } }
+    );
+
+    await waitFor(() => {
+      expect(queryAllByText('Connection Type')).toHaveLength(1);
+      expect(queryAllByText('Private')).toHaveLength(1);
+    });
+  });
+
+  it('should display Connection Type as Public for default database with no VPC when databaseVpc flag is enabled', async () => {
+    queryMocks.useDatabaseCredentialsQuery.mockReturnValue({});
+
+    const database = databaseFactory.build({
+      platform: 'rdbms-default',
+    }) as Database;
+
+    database.private_network = null;
+
+    const { queryAllByText } = renderWithTheme(
+      <DatabaseSummaryConnectionDetails database={database} />,
+      { flags: { databaseVpc: true } }
+    );
+
+    await waitFor(() => {
+      expect(queryAllByText('Connection Type')).toHaveLength(1);
+      expect(queryAllByText('Public')).toHaveLength(1);
+    });
+  });
+
   it('should not display Connection Type for default database when databaseVpc flag is disabled', async () => {
     queryMocks.useDatabaseCredentialsQuery.mockReturnValue({});
 
