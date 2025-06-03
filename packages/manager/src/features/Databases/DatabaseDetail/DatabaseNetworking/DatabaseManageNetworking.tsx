@@ -85,7 +85,7 @@ export const DatabaseManageNetworking = ({ database }: Props) => {
     return <CircleProgress />;
   }
 
-  if ((hasVPCConfigured && !vpc) || error) {
+  if (error || (hasVPCConfigured && !vpc)) {
     return (
       <ErrorState errorText="There was a problem retrieving your VPC. Please try again later." />
     );
