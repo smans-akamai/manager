@@ -74,7 +74,7 @@ export const DatabaseBackups = () => {
 
   const isDefaultDatabase = database?.platform === 'rdbms-default';
   const unsupportedVersion =
-    engine === 'postgresql' && getVersion(database?.version, 'major') === '14';
+    engine === 'postgresql' && getVersion(database?.version, 'major') === '14'; // Check should include feature flag
 
   const oldestBackup = database?.oldest_restore_time
     ? DateTime.fromISO(`${database.oldest_restore_time}`, { zone: 'utc' }) // Backend uses UTC, so we explicitly set this as the timezone

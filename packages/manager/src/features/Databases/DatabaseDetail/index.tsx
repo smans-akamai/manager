@@ -219,7 +219,7 @@ export const DatabaseDetail = () => {
             </Typography>
           </DismissibleBanner>
         )}
-        {onBackupsTab &&
+        {onBackupsTab && // Check should include feature flag
           engine === 'postgresql' &&
           getVersion(database.version, 'major') === '14' && (
             <Notice
