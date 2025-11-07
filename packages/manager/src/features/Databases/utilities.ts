@@ -256,3 +256,18 @@ export const convertPrivateToPublicHostname = (host: string) => {
   const baseHostName = host.slice(privateStrIndex + 1);
   return `public-${baseHostName}`;
 };
+
+/** This function will retrieve the specified version type from a version string. */
+export const getVersion = (
+  version: string | undefined,
+  type: 'major' | 'minor' | 'patch'
+) => {
+  if (!version) return;
+
+  const versionMap = {
+    major: 0,
+    minor: 1,
+    patch: 2,
+  };
+  return version.split('.')[versionMap[type]];
+};

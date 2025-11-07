@@ -33,6 +33,8 @@ import { useIsResourceRestricted } from 'src/hooks/useIsResourceRestricted';
 import { useTabs } from 'src/hooks/useTabs';
 import { getAPIErrorOrDefault } from 'src/utilities/errorUtils';
 
+import { getVersion } from '../utilities';
+
 import type { APIError } from '@linode/api-v4/lib/types';
 
 export const DatabaseDetail = () => {
@@ -68,6 +70,7 @@ export const DatabaseDetail = () => {
   const isAdvancedConfigEnabled = isDefault && flags.databaseAdvancedConfig;
 
   const settingsTabPath = `/databases/$engine/$databaseId/settings`;
+  const backupsTabPath = `/databases/$engine/$databaseId/backups`;
 
   const { tabs, tabIndex, handleTabChange, getTabIndex } = useTabs([
     {
@@ -87,7 +90,7 @@ export const DatabaseDetail = () => {
       chip: <NewFeatureChip />,
     },
     {
-      to: `/databases/$engine/$databaseId/backups`,
+      to: backupsTabPath,
       title: 'Backups',
     },
     {
@@ -154,6 +157,7 @@ export const DatabaseDetail = () => {
   };
 
   const onSettingsTab = tabIndex === getTabIndex(settingsTabPath);
+  const onBackupsTab = tabIndex === getTabIndex(backupsTabPath);
 
   return (
     <DatabaseDetailContext.Provider
@@ -215,6 +219,14 @@ export const DatabaseDetail = () => {
             </Typography>
           </DismissibleBanner>
         )}
+        {onBackupsTab &&
+          engine === 'postgresql' &&
+          getVersion(database.version, 'major') === '14' && (
+            <Notice
+              text={'Some message about the version goes here'}
+              variant="warning"
+            />
+          )}
 
         <TabPanels>
           <Outlet />

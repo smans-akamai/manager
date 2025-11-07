@@ -26,6 +26,7 @@ import {
   StyledTypography,
 } from 'src/features/Databases/DatabaseDetail/DatabaseBackups/DatabaseBackups.style';
 import {
+  getVersion,
   isDateOutsideBackup,
   isTimeOutsideBackup,
   useIsDatabasesEnabled,
@@ -72,6 +73,8 @@ export const DatabaseBackups = () => {
   } = useDatabaseQuery(engine, Number(databaseId));
 
   const isDefaultDatabase = database?.platform === 'rdbms-default';
+  const unsupportedVersion =
+    engine === 'postgresql' && getVersion(database?.version, 'major') === '14';
 
   const oldestBackup = database?.oldest_restore_time
     ? DateTime.fromISO(`${database.oldest_restore_time}`, { zone: 'utc' }) // Backend uses UTC, so we explicitly set this as the timezone
@@ -265,8 +268,9 @@ export const DatabaseBackups = () => {
               buttonType="primary"
               data-qa-settings-button="restore"
               disabled={
-                versionOption === 'dateTime' &&
-                (!selectedDate || !selectedTime || !!timePickerError)
+                unsupportedVersion ||
+                (versionOption === 'dateTime' &&
+                  (!selectedDate || !selectedTime || !!timePickerError))
               }
               onClick={onRestoreDatabase}
             >
